@@ -92,14 +92,16 @@ const MovieDetails = () => {
 
                     <p className="text-light-200 leading-relaxed mb-8">{movie.overview}</p>
 
-                    {trailerKey && (
-                        <div className="mt-8">
-                            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#AB8BFF]" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
-                                </svg>
-                                Official Trailer
-                            </h3>
+                    {/* Trailer Section */}
+                    <div className="mt-8">
+                        <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#AB8BFF]" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                            </svg>
+                            Official Trailer
+                        </h3>
+
+                        {trailerKey ? (
                             <div className="aspect-video rounded-xl overflow-hidden shadow-lg border border-light-100/10">
                                 <iframe
                                     className="w-full h-full"
@@ -109,8 +111,22 @@ const MovieDetails = () => {
                                     allowFullScreen
                                 />
                             </div>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="flex flex-col items-center justify-center p-8 bg-dark-200/50 rounded-xl border border-light-100/10">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-light-200 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 5.25v13.5A2.25 2.25 0 006.75 21h6.75a2.25 2.25 0 002.25-2.25v-3.75m0-6l5.25-3v12l-5.25-3" />
+                                    <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
+                                </svg>
+
+                                <p className="text-light-100 mt-4 text-center max-w-md">
+                                    No official trailer available for this movie
+                                </p>
+                                <p className="text-light-200 text-sm mt-2 text-center">
+                                    We couldn't find a trailer for this title
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
