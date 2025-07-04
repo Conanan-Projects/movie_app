@@ -171,7 +171,7 @@ const Home = () => {
                             <div className="flex items-center gap-3 text-light-200">
                                 <button
                                     onClick={() => scrollGallery('left')}
-                                    className="p-2 rounded-full bg-dark-100 hover:bg-light-100/10 transition-colors"
+                                    className="p-2 rounded-full bg-dark-100 hover:bg-light-100/10 transition-colors cursor-pointer"
                                     aria-label="Scroll left"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -180,7 +180,7 @@ const Home = () => {
                                 </button>
                                 <button
                                     onClick={() => scrollGallery('right')}
-                                    className="p-2 rounded-full bg-dark-100 hover:bg-light-100/10 transition-colors"
+                                    className="p-2 rounded-full bg-dark-100 hover:bg-light-100/10 transition-colors cursor-pointer"
                                     aria-label="Scroll right"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="CurrentColor">
@@ -244,7 +244,7 @@ const Home = () => {
                             <button
                                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
-                                className="px-4 py-2 bg-dark-100 text-light-200 rounded-lg flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:bg-light-100/10"
+                                className="px-4 py-2 bg-dark-100 text-light-200 rounded-lg flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:bg-light-100/10 cursor-pointer"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                                     <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -259,7 +259,7 @@ const Home = () => {
                                     className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
                                         currentPage === page
                                             ? 'bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-primary font-bold'
-                                            : 'bg-dark-100 text-light-200 hover:bg-light-100/10'
+                                            : 'bg-dark-100 text-light-200 hover:bg-light-100/10 cursor-pointer'
                                     }`}
                                 >
                                     {page}
@@ -269,7 +269,7 @@ const Home = () => {
                             <button
                                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                                 disabled={currentPage === totalPages}
-                                className="px-4 py-2 bg-dark-100 text-light-200 rounded-lg flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:bg-light-100/10"
+                                className="px-4 py-2 bg-dark-100 text-light-200 rounded-lg flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:bg-light-100/10 cursor-pointer"
                             >
                                 Next
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
