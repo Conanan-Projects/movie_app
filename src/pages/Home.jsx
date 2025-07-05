@@ -6,9 +6,7 @@ import {useDebounce} from "react-use";
 import {getTrendingMovies, updateSearchCount} from "../appwrite.js";
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
-
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-
 const API_OPTIONS = {
     method: 'GET',
     headers: {
@@ -16,21 +14,30 @@ const API_OPTIONS = {
         Authorization: `Bearer ${API_KEY}`,
     }
 }
+
 const Home = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
-
     const [movieList, setMovieList] = useState([]);
     const [errorMessage, setErrorMessage] = useState('')
     const [isLoading, setIsLoading] = useState(false)
-
     const [trendingMovies, setTrendingMovies] = useState([])
-
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [sortField, setSortField] = useState('popularity'); // Sort field only
+    const [sortDirection, setSortDirection] = useState('desc'); // asc or desc
     const pageLimit = 5;
-
     const galleryRef = useRef(null);
+
+    // Sorting options - now without direction
+    const SORT_OPTIONS = [
+        { value: 'popularity', label: 'Popularity' },
+        { value: 'vote_average', label: 'Rating' },
+        { value: 'revenue', label: 'Box Office' },
+        { value: 'primary_release_date', label: 'Release Date' },
+        { value: 'original_title', label: 'Title' },
+        { value: 'vote_count', label: 'Vote Count' },
+    ];
 
     useDebounce(() => setDebouncedSearchTerm(searchTerm), 500, [searchTerm])
 
@@ -39,9 +46,14 @@ const Home = () => {
         setErrorMessage('');
 
         try {
-            const endpoint = query
-                ? `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${page}`
-                : `${API_BASE_URL}/discover/movie?sort_by=popularity.desc&page=${page}`;
+            let endpoint;
+            if (query) {
+                endpoint = `${API_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&page=${page}`;
+            } else {
+                // Combine sort field and direction
+                const sortBy = `${sortField}.${sortDirection}`;
+                endpoint = `${API_BASE_URL}/discover/movie?sort_by=${sortBy}&page=${page}&vote_count.gte=100`;
+            }
 
             const response = await fetch(endpoint, API_OPTIONS);
 
@@ -57,7 +69,7 @@ const Home = () => {
             }
 
             setMovieList(data.results || []);
-            setTotalPages(data.total_pages);  // 👈 TMDB provides this
+            setTotalPages(data.total_pages);
 
             if (query && data.results.length > 0) {
                 await updateSearchCount(query, data.results[0]);
@@ -70,50 +82,22 @@ const Home = () => {
         }
     };
 
-
     const loadTrendingMovies = async () => {
         try {
             const movies = await getTrendingMovies();
-
             setTrendingMovies(movies);
         } catch (error){
             console.error(`Error fetching trending movies: ${error}`);
         }
     }
 
-    // Fetch trending movies from Appwrite
-    useEffect(() => {
-        const fetchTrendingMovies = async () => {
-            try {
-                setIsLoading(true);
-
-                // Use your Appwrite function to get trending movies
-                const trending = await getTrendingMovies();
-
-                // Set the trending movies directly from Appwrite
-                setTrendingMovies(trending);
-            } catch (error) {
-                console.error("Error fetching trending movies:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchTrendingMovies();
-    }, []);
-
-    // Navigation handlers
     const scrollGallery = (direction) => {
         if (!galleryRef.current) return;
-
         const gallery = galleryRef.current;
         const scrollAmount = gallery.offsetWidth * 0.8;
-
-        if (direction === 'left') {
-            gallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-        } else {
-            gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        }
+        direction === 'left'
+            ? gallery.scrollBy({ left: -scrollAmount, behavior: 'smooth' })
+            : gallery.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     };
 
     const getPageNumbers = () => {
@@ -121,7 +105,6 @@ const Home = () => {
         let start = Math.max(1, currentPage - half);
         let end = Math.min(totalPages, start + pageLimit - 1);
 
-        // Shift window if we're near the end
         if (end - start < pageLimit - 1) {
             start = Math.max(1, end - pageLimit + 1);
         }
@@ -133,14 +116,17 @@ const Home = () => {
         return pages;
     };
 
+    const toggleSortDirection = () => {
+        setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    };
 
     useEffect(() => {
         fetchMovies(debouncedSearchTerm, currentPage);
-    }, [debouncedSearchTerm, currentPage]);
+    }, [debouncedSearchTerm, currentPage, sortField, sortDirection]);
 
     useEffect(() => {
-        setCurrentPage(1); // 👈 reset to first page on new search
-    }, [debouncedSearchTerm]);
+        setCurrentPage(1);
+    }, [debouncedSearchTerm, sortField, sortDirection]);
 
     useEffect(() => {
         loadTrendingMovies()
@@ -152,7 +138,6 @@ const Home = () => {
             section.scrollIntoView({ behavior: 'smooth' });
         }
     }, [currentPage]);
-
 
     return (
         <main className="relative z-10">
@@ -221,9 +206,53 @@ const Home = () => {
                     </section>
                 )}
 
-
                 <section className="all-movies mt-16">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">All Movies</h2>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white">All Movies</h2>
+
+                        {/* Sorting Controls */}
+                        <div className="flex items-center gap-2">
+                            {/* Direction Toggle Button */}
+                            <button
+                                onClick={toggleSortDirection}
+                                className="p-2 rounded-lg bg-dark-100 hover:bg-light-100/10 transition-colors flex items-center justify-center"
+                                aria-label={`Sort direction: ${sortDirection === 'asc' ? 'Ascending' : 'Descending'}`}
+                                title={`Sort ${sortDirection === 'asc' ? 'Ascending' : 'Descending'}`}
+                            >
+                                {sortDirection === 'asc' ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-light-200" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-light-200" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                                    </svg>
+                                )}
+                            </button>
+
+                            {/* Field Dropdown */}
+                            <div className="relative">
+                                <select
+                                    value={sortField}
+                                    onChange={(e) => setSortField(e.target.value)}
+                                    className="appearance-none bg-dark-100 text-light-200 border border-light-100/20 rounded-lg px-3 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-[#AB8BFF]"
+                                >
+                                    {SORT_OPTIONS.map(option => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                {/* Custom dropdown arrow */}
+                                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-light-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     {isLoading ? (
                         <div className="flex justify-center py-12">
@@ -232,7 +261,7 @@ const Home = () => {
                     ) : errorMessage ? (
                         <p className="text-center py-8 text-red-400">{errorMessage}</p>
                     ) : (
-                        <ul>
+                        <ul className="grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                             {movieList.map(movie => (
                                 <MovieCard key={movie.id} movie={movie} />
                             ))}

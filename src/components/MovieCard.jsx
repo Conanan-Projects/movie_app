@@ -13,7 +13,7 @@ const MovieCard = ({ movie: { id, title, vote_average, poster_path, release_date
                 <img
                     src={poster_path ? `https://image.tmdb.org/t/p/w500/${poster_path}` : '/No-Poster.png'}
                     alt={title}
-                    className="w-full h-[300px] object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-100 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
