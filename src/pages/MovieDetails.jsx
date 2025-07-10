@@ -205,7 +205,6 @@ const MovieDetails = () => {
                 {/* Tab content */}
                 {activeTab === 'details' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Production Companies - FIXED LOGO VISIBILITY */}
                         <div className="bg-dark-200/50 p-5 rounded-xl">
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#AB8BFF]" viewBox="0 0 20 20" fill="currentColor">

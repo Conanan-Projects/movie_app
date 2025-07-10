@@ -58,7 +58,7 @@
   }
 
   .trending {
-    @apply mt-20;
+    @apply mt-5;
 
     & ul {
       @apply flex flex-row overflow-y-auto gap-5 -mt-10 w-full hide-scrollbar;
@@ -74,22 +74,6 @@
 
     & ul li img {
       @apply w-[127px] h-[163px] rounded-lg object-cover -ml-3.5;
-    }
-  }
-
-  .search {
-    @apply w-full bg-light-100/5 px-4 py-3 rounded-lg mt-10 max-w-3xl mx-auto;
-
-    & div {
-      @apply relative flex items-center;
-    }
-
-    & img {
-      @apply absolute left-2 h-5 w-5;
-    }
-
-    & input {
-      @apply w-full bg-transparent py-2 sm:pr-10 pl-10 text-base text-gray-200 placeholder-light-200 outline-hidden;
     }
   }
 
@@ -140,6 +124,32 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
+}
+
+.landing-page .hero {
+  background-image: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-pattern {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, #D6C7FF 0%, #AB8BFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-page .hero h1 {
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.landing-page .hero p {
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 .fancy-text-sm {
